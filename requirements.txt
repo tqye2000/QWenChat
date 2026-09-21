@@ -1,0 +1,23 @@
+# Install into a plain venv:
+#   python -m venv .venv
+#   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+# GPU-enabled PyTorch (CUDA 12.8 wheels — compatible with CUDA 13.x drivers)
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch
+torchvision
+
+openai
+transformers[serving]
+accelerate
+
+# Lightweight web chat UI (ui_qwen.py).
+gradio
+
+# Load model selection and other settings from a local .env file.
+python-dotenv
+
+# Trust the Windows certificate store (needed behind TLS-intercepting
+# corporate proxies that break the default certifi trust store).
+truststore
+pip-system-certs
