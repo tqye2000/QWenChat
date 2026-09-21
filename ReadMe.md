@@ -34,14 +34,14 @@ Env vars (all optional):
 
 | Variable         | Default          | Purpose                                                                 |
 |------------------|------------------|--------------------------------------------------------------------------|
-| `QWEN_MODEL`     | `Qwen/Qwen3-32B` | Hugging Face model id to serve                                           |
+| `QWEN_MODEL`     | `Qwen/Qwen3.6-27B` | Hugging Face model id to serve                                         |
 | `QWEN_MULTI_GPU` | `1`              | Set to `1` to shard a large model across all visible GPUs (accelerate). Disables `--continuous-batching` automatically. |
 | `QWEN_REASONING` | `auto`           | Reasoning mode for supported models: `on`, `off`, or `auto`.            |
 
 Examples:
 
 ```powershell
-# Default: Qwen3-8B on a single GPU with continuous batching
+# Default: Qwen3.6-27B, sharded across available GPUs
 .\.venv\Scripts\python.exe serve_qwen.py
 
 # A bigger model, single GPU
@@ -67,7 +67,7 @@ If you don't need the certificate fix or env-var switches, the underlying
 command is:
 
 ```powershell
-transformers serve --port 8000 --continuous-batching Qwen/Qwen3-8B
+transformers serve --port 8000 --continuous-batching Qwen/Qwen3.6-27B
 ```
 
 ## Chatting with the model
@@ -84,10 +84,37 @@ Env vars (all optional):
 |--------------------|-----------------------------|---------------------------------------|
 | `OPENAI_API_BASE`  | `http://localhost:8000/v1`  | Base URL of the inference server      |
 | `OPENAI_API_KEY`   | `EMPTY`                     | API key (any non-empty string works)  |
-| `OPENAI_MODEL`     | `Qwen/Qwen3-8B`              | Model id to request (must match what the server is serving) |
+| `OPENAI_MODEL`     | `Qwen/Qwen3.6-27B`           | Model id to request (must match what the server is serving) |
 | `OPENAI_REASONING` | `auto`                      | Per-request reasoning mode: `on`, `off`, or `auto`. |
 
 Type `quit` or `exit` to stop the chat.
+
+## Using the web UI
+
+With the inference server still running, open a second terminal and start the
+Gradio web interface:
+
+```powershell
+$env:OPENAI_API_BASE = "http://localhost:8000/v1"
+$env:OPENAI_MODEL = "Qwen/Qwen3.6-27B"
+.\.venv\Scripts\python.exe ui_qwen.py
+```
+
+Then open `http://127.0.0.1:7860` in a browser. The UI streams responses as
+they are generated and displays model reasoning in a collapsible section. You
+can also attach text files such as `.txt`, `.md`, `.json`, `.py`, or `.csv` to
+include their contents as context for a prompt.
+
+The UI settings can be configured with these optional environment variables:
+
+| Variable               | Default                    | Purpose                                    |
+|------------------------|----------------------------|--------------------------------------------|
+| `OPENAI_API_BASE`      | `http://localhost:8080/v1` | Inference server URL                       |
+| `OPENAI_API_KEY`       | `EMPTY`                    | API key; any non-empty value works locally |
+| `OPENAI_MODEL`         | `Qwen/Qwen3.6-27B`        | Model served by the inference server      |
+| `GRADIO_SERVER_NAME`   | `127.0.0.1`                | Address used by the web UI                |
+| `GRADIO_SERVER_PORT`   | `7860`                     | Port used by the web UI                   |
+| `GRADIO_SHARE`         | `0`                        | Set to `1` to create a public Gradio link |
 
 ## Choosing a model (VRAM guide, bf16)
 
