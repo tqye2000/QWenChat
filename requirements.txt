@@ -10,6 +10,10 @@ torchvision
 openai
 transformers[serving]
 accelerate
+diffusers
+huggingface-hub
+pillow
+psutil
 
 # Lightweight web chat UI (ui_qwen.py).
 gradio
